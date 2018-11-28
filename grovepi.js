@@ -14,31 +14,31 @@
  * limitations under the License.
  **/
 
-var GrovePi = require('node-grovepi').GrovePi;
-var i2c = require('i2c-bus');
+// var GrovePi = require('node-grovepi').GrovePi;
+// var i2c = require('i2c-bus');
 var sleep = require('sleep/');
 
-var Commands = GrovePi.commands
-var Board = GrovePi.board
+// var Commands = GrovePi.commands
+// var Board = GrovePi.board
 
-var Analog = GrovePi.sensors.base.Analog
-var Digital = GrovePi.sensors.base.Digital
+// var Analog = GrovePi.sensors.base.Analog
+// var Digital = GrovePi.sensors.base.Digital
 
 
-var DISPLAY_RGB_ADDR = 0x62;
-var DISPLAY_TEXT_ADDR = 0x3e;
+// var DISPLAY_RGB_ADDR = 0x62;
+// var DISPLAY_TEXT_ADDR = 0x3e;
 
 function setRGB(i2c1, r, g, b) {
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,0,0)
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,1,0)
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,0x08,0xaa)
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,4,r)
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,3,g)
-  i2c1.writeByteSync(DISPLAY_RGB_ADDR,2,b)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,0,0)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,1,0)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,0x08,0xaa)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,4,r)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,3,g)
+  // i2c1.writeByteSync(DISPLAY_RGB_ADDR,2,b)
 }
 
 function textCommand(i2c1, cmd) {
-  i2c1.writeByteSync(DISPLAY_TEXT_ADDR, 0x80, cmd);
+  // i2c1.writeByteSync(DISPLAY_TEXT_ADDR, 0x80, cmd);
 }
 
 function setText(i2c1, text) {
@@ -66,23 +66,23 @@ function setText(i2c1, text) {
 
 
 module.exports = function(RED) {
-    var board = new Board({
-         debug: true,
-         onError: function(err){
-           console.error('GrovePiBoard.js: Something went wrong');
-           console.error(err)
-         },
-         onInit: function(res) {
-         }
-    });
+    // var board = new Board({
+    //      debug: true,
+    //      onError: function(err){
+    //        console.error('GrovePiBoard.js: Something went wrong');
+    //        console.error(err)
+    //      },
+    //      onInit: function(res) {
+    //      }
+    // });
 
-    board.init();
+    // board.init();
 
-    var fs =  require('fs');
+    // var fs =  require('fs');
 
-    if (!fs.existsSync("/dev/ttyAMA0")) { // unlikely if not on a Pi
-        throw "Info : Node ignored because /dev/ttyAMA0 doesn't exist.";
-    }
+    // if (!fs.existsSync("/dev/ttyAMA0")) { // unlikely if not on a Pi
+    //     throw "Info : Node ignored because /dev/ttyAMA0 doesn't exist.";
+    // }
 
     function Led(n) {
         RED.nodes.createNode(this,n);
@@ -92,7 +92,7 @@ module.exports = function(RED) {
 
         node.status({fill:"green",shape:"dot",text:"ok"});
         var analog = new Analog(node.pin);
-        board.pinMode(node.pin, 'output');
+        //board.pinMode(node.pin, 'output');
         function inputlistener(msg) {
             var out = Number(msg.payload);
             var limit = 255;
@@ -136,7 +136,7 @@ module.exports = function(RED) {
         node.status({fill:"green",shape:"dot",text:"ok"});
         var digital = new Digital(node.pin);
 
-        board.pinMode(node.pin, 'output');
+        //board.pinMode(node.pin, 'output');
 
         function inputlistener(msg) {
             var out = Number(msg.payload);
@@ -179,7 +179,7 @@ module.exports = function(RED) {
         node.status({fill:"green",shape:"dot",text:"ok"});
         var digital = new Digital(node.pin);
 
-        board.pinMode(node.pin, 'output');
+        //board.pinMode(node.pin, 'output');
 
         function inputlistener(msg) {
             var out = Number(msg.payload);
@@ -221,28 +221,28 @@ module.exports = function(RED) {
 
         node.status({fill:"green",shape:"dot",text:"ok"});
 
-        function inputlistener(msg) {
-            var payload = msg.payload;
-            if(typeof payload === 'undefined') {
-                return;
-                node.warm("Invalid payload: undefined");
-            }
+        // function inputlistener(msg) {
+        //     var payload = msg.payload;
+        //     if(typeof payload === 'undefined') {
+        //         return;
+        //         node.warm("Invalid payload: undefined");
+        //     }
 
-            if(typeof payload.rgb !== 'undefined' && payload.rgb.length === 3) {
-                var i2c1 = i2c.openSync(1);
-                setRGB(i2c1, payload.rgb[0], payload.rgb[1], payload.rgb[2]);
-                i2c1.closeSync();
-            } else if(typeof payload.rgb !== 'undefined') {
-                node.warm("Invalid payload.rgb:  " + payload.rgb);
-            }
+        //     if(typeof payload.rgb !== 'undefined' && payload.rgb.length === 3) {
+        //         var i2c1 = i2c.openSync(1);
+        //         setRGB(i2c1, payload.rgb[0], payload.rgb[1], payload.rgb[2]);
+        //         i2c1.closeSync();
+        //     } else if(typeof payload.rgb !== 'undefined') {
+        //         node.warm("Invalid payload.rgb:  " + payload.rgb);
+        //     }
 
-            if(typeof payload.text !== 'undefined') {
-                var i2c1 = i2c.openSync(1);
-                setText(i2c1, payload.text.toString());
-                i2c1.closeSync();
-                node.status({fill:"green",shape:"dot",text:payload.text.toString()});
-            }
-        }
+        //     if(typeof payload.text !== 'undefined') {
+        //         var i2c1 = i2c.openSync(1);
+        //         setText(i2c1, payload.text.toString());
+        //         i2c1.closeSync();
+        //         node.status({fill:"green",shape:"dot",text:payload.text.toString()});
+        //     }
+        // }
 
         node.running = true;
         node.status({fill:"green",shape:"dot",text:"ok"});
@@ -267,31 +267,31 @@ module.exports = function(RED) {
         this.sensor = n.sensor;
         var node = this;
 
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
         var oldVal;
-        var interval = setInterval(function() {
+        // var interval = setInterval(function() {
 
-            var value;
-            var write = board.writeBytes(Commands.uRead.concat([node.pin, Commands.unused, Commands.unused]))
-            if (write) {
-                board.wait(200)
-                board.readByte()
-                var bytes = board.readBytes()
-                if (bytes instanceof Buffer)
-                    value = (bytes[1] * 256 + bytes[2])
-                else
-                    value = false
-                } else {
-                    value = false
-                }
+        //     var value;
+        //     var write = board.writeBytes(Commands.uRead.concat([node.pin, Commands.unused, Commands.unused]))
+        //     if (write) {
+        //         board.wait(200)
+        //         board.readByte()
+        //         var bytes = board.readBytes()
+        //         if (bytes instanceof Buffer)
+        //             value = (bytes[1] * 256 + bytes[2])
+        //         else
+        //             value = false
+        //         } else {
+        //             value = false
+        //         }
 
-            if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 100);
+        //     if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 100);
 
         node.on("close", function(done) {
             clearInterval(interval);
@@ -312,30 +312,30 @@ module.exports = function(RED) {
         this.sensor = n.sensor;
         var node = this;
 
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
         var oldVal;
-        var interval = setInterval(function() {
-            var value;
-            var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
-            if(writeRet) {
-                board.readByte();
-                var bytes = board.readBytes();
-                if(bytes instanceof Buffer) {
-                    value = bytes[1] * 256 + bytes[2]
-                } else {
-                    value = false;
-                }
-            } else {
-                value = false;
-            }
+        // var interval = setInterval(function() {
+        //     var value;
+        //     var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
+        //     if(writeRet) {
+        //         board.readByte();
+        //         var bytes = board.readBytes();
+        //         if(bytes instanceof Buffer) {
+        //             value = bytes[1] * 256 + bytes[2]
+        //         } else {
+        //             value = false;
+        //         }
+        //     } else {
+        //         value = false;
+        //     }
 
-            if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 100);
+        //     if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 100);
 
         node.on('close', function() {
             node.status({fill:"grey",shape:"ring",text:"Closed"});
@@ -357,30 +357,30 @@ module.exports = function(RED) {
         this.sensor = n.sensor;
         var node = this;
 
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
         var oldVal;
-        var interval = setInterval(function() {
-            var value;
-            var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
-            if(writeRet) {
-                board.readByte();
-                var bytes = board.readBytes();
-                if(bytes instanceof Buffer) {
-                    value = bytes[1] * 256 + bytes[2]
-                } else {
-                    value = false;
-                }
-            } else {
-                value = false;
-            }
+        // var interval = setInterval(function() {
+        //     var value;
+        //     var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
+        //     if(writeRet) {
+        //         board.readByte();
+        //         var bytes = board.readBytes();
+        //         if(bytes instanceof Buffer) {
+        //             value = bytes[1] * 256 + bytes[2]
+        //         } else {
+        //             value = false;
+        //         }
+        //     } else {
+        //         value = false;
+        //     }
 
-            if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 100);
+        //     if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 100);
 
         node.on('close', function() {
             node.status({fill:"grey",shape:"ring",text:"Closed"});
@@ -403,27 +403,27 @@ module.exports = function(RED) {
         var node = this;
 
         var digital = new Digital(node.pin);
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
 
         var oldVal;
-        var interval = setInterval(function() {
-            var value;
+        // var interval = setInterval(function() {
+        //     var value;
 
-            var writeRet = board.writeBytes(Commands.dRead.concat([node.pin, Commands.unused, Commands.unused]))
-            if (writeRet) {
-                board.wait(100)
-                value = board.readByte()[0]
-            } else {
-                value = false
-            }
+        //     var writeRet = board.writeBytes(Commands.dRead.concat([node.pin, Commands.unused, Commands.unused]))
+        //     if (writeRet) {
+        //         board.wait(100)
+        //         value = board.readByte()[0]
+        //     } else {
+        //         value = false
+        //     }
 
-            if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 100);
+        //     if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 100);
 
         node.on('close', function() {
             node.status({fill:"grey",shape:"ring",text:"Closed"});
@@ -447,30 +447,30 @@ module.exports = function(RED) {
         this.sensor = n.sensor;
         var node = this;
 
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
         var oldVal;
-        var interval = setInterval(function() {
-            var value;
-            var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
-            if(writeRet) {
-                board.readByte();
-                var bytes = board.readBytes();
-                if(bytes instanceof Buffer) {
-                    value = bytes[1] * 256 + bytes[2]
-                } else {
-                    value = false;
-                }
-            } else {
-                value = false;
-            }
+        // var interval = setInterval(function() {
+        //     var value;
+        //     var writeRet = board.writeBytes(Commands.aRead.concat([node.pin, Commands.unused, Commands.unused]));
+        //     if(writeRet) {
+        //         board.readByte();
+        //         var bytes = board.readBytes();
+        //         if(bytes instanceof Buffer) {
+        //             value = bytes[1] * 256 + bytes[2]
+        //         } else {
+        //             value = false;
+        //         }
+        //     } else {
+        //         value = false;
+        //     }
 
-            if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 100);
+        //     if(typeof value !== 'undefined' && value !== false && value !== oldVal) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 100);
 
         node.on('close', function() {
             node.status({fill:"grey",shape:"ring",text:"Closed"});
@@ -515,44 +515,44 @@ module.exports = function(RED) {
         this.sensor = n.sensor;
         var node = this;
 
-        board.pinMode(node.pin, 'input');
+        //board.pinMode(node.pin, 'input');
         var oldVal = [0,0,0];
-        var interval = setInterval(function() {
-            var value;
+        // var interval = setInterval(function() {
+        //     var value;
 
-            var write = board.writeBytes(Commands.dht_temp.concat([node.pin, Commands.unused, Commands.unused]))
-            if (write) {
-                board.wait(500)
-                board.readByte()
-                board.wait(200)
-                var bytes = board.readBytes(9)
-                if (bytes instanceof Buffer) {
-                    var hex
-                    var tempBytes = bytes.slice(1, 5).reverse()
-                    var humBytes = bytes.slice(5, 9).reverse()
+        //     var write = board.writeBytes(Commands.dht_temp.concat([node.pin, Commands.unused, Commands.unused]))
+        //     if (write) {
+        //         board.wait(500)
+        //         board.readByte()
+        //         board.wait(200)
+        //         var bytes = board.readBytes(9)
+        //         if (bytes instanceof Buffer) {
+        //             var hex
+        //             var tempBytes = bytes.slice(1, 5).reverse()
+        //             var humBytes = bytes.slice(5, 9).reverse()
 
-                    hex = '0x' + tempBytes.toString('hex')
-                    var temp = (hex & 0x7fffff | 0x800000) * 1.0 / Math.pow(2, 23) * Math.pow(2, ((hex >> 23 & 0xff) - 127))
-                    temp = +(Number(parseFloat(temp - 0.5).toFixed(2)))
+        //             hex = '0x' + tempBytes.toString('hex')
+        //             var temp = (hex & 0x7fffff | 0x800000) * 1.0 / Math.pow(2, 23) * Math.pow(2, ((hex >> 23 & 0xff) - 127))
+        //             temp = +(Number(parseFloat(temp - 0.5).toFixed(2)))
 
-                    hex = '0x' + humBytes.toString('hex')
-                    var hum = (hex & 0x7fffff | 0x800000) * 1.0 / Math.pow(2, 23) * Math.pow(2, ((hex >> 23 & 0xff) - 127))
-                    hum = +(Number(parseFloat(hum - 2).toFixed(2)))
+        //             hex = '0x' + humBytes.toString('hex')
+        //             var hum = (hex & 0x7fffff | 0x800000) * 1.0 / Math.pow(2, 23) * Math.pow(2, ((hex >> 23 & 0xff) - 127))
+        //             hum = +(Number(parseFloat(hum - 2).toFixed(2)))
 
-                    var heatIndex = +(Number(parseFloat(getHeatIndex(temp, hum, this.scale)).toFixed(2)))
-                    value = [temp, hum, heatIndex];
-                } else
-                    value = false;
-            } else {
-                value = false;
-            }
-            if(typeof value !== 'undefined' && value !== false && value.join(',') !== oldVal.join(',')) {
-                node.send({ topic:"pi/"+node.pin, payload:value });
-                node.buttonState = value;
-                node.status({fill:"green",shape:"dot",text:value.toString()});  
-                oldVal = value;
-            }
-        }, 1000);
+        //             var heatIndex = +(Number(parseFloat(getHeatIndex(temp, hum, this.scale)).toFixed(2)))
+        //             value = [temp, hum, heatIndex];
+        //         } else
+        //             value = false;
+        //     } else {
+        //         value = false;
+        //     }
+        //     if(typeof value !== 'undefined' && value !== false && value.join(',') !== oldVal.join(',')) {
+        //         node.send({ topic:"pi/"+node.pin, payload:value });
+        //         node.buttonState = value;
+        //         node.status({fill:"green",shape:"dot",text:value.toString()});  
+        //         oldVal = value;
+        //     }
+        // }, 1000);
 
         node.on('close', function() {
             node.status({fill:"grey",shape:"ring",text:"Closed"});
